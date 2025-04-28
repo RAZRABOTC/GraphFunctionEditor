@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+	  <Version>1.0.0</Version>
+	  <Authors>Razrab</Authors>
+	  <Description>The graphFunction editor when you can build, write your graph functions</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="GraphFunctions" Version="1.0.1.1" />
+  </ItemGroup>
+
+</Project>
