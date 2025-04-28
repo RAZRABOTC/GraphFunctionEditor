@@ -1,5 +1,6 @@
 ﻿using Dimension;
 using GraphFunctions;
+using System.Diagnostics;
 
 namespace GraphFunctionEditor
 {
@@ -67,7 +68,7 @@ namespace GraphFunctionEditor
         public void AddGraphFunction(string formula, FlowLayoutPanel flowLayoutPanel)
         {
             int id = GetId();
-            GraphFunctions.Add(id.ToString(), new GraphFunctionLine(new GraphFunction(formula, -gridCellSize*gridCellsAmount/2,gridCellsAmount*gridCellSize/2, 1000), flowLayoutPanel, id));
+            GraphFunctions.Add(id.ToString(), new GraphFunctionLine(new GraphFunction(formula, -gridCellSize*gridCellsAmount/20,gridCellsAmount*gridCellSize/20, 300), flowLayoutPanel, id));
         }
     }
 
@@ -98,19 +99,22 @@ namespace GraphFunctionEditor
             idLabel.AutoSize = true;
 
             idLabel.Text = "ID : " + id;
+            idLabel.ForeColor = Color.FromArgb(39, 41, 54);
             formulaLabel.AutoSize = true;
             formulaLabel.Text = "Formula : " + graphFunction.Formula;
+            formulaLabel.ForeColor = Color.FromArgb(39, 41, 54);
             colorButton.BackColor = Color;
+            colorButton.ForeColor = Color.FromArgb(39, 41, 54);
             colorButton.Size = new(20, 20);
             colorButton.Click += (flowLayoutPanel.Parent.Parent.Parent as Form1).OnChangeColorButtonClick;
             FlowLayoutPanel graphFunctionPanel = new();
             graphFunctionPanel.FlowDirection = FlowDirection.LeftToRight;
+            graphFunctionPanel.BorderStyle = BorderStyle.FixedSingle;
             graphFunctionPanel.Size = new(flowLayoutPanel.Width - 10, 30);
+            graphFunctionPanel.BackColor = Color.FromArgb(219, 138, 15);
             idLabel.Margin = new Padding(graphFunctionPanel.Height - idLabel.Height);
             formulaLabel.Margin = new Padding(graphFunctionPanel.Height - formulaLabel.Height);
             colorButton.Margin = new Padding((graphFunctionPanel.Height - colorButton.Height) / 2);
-
-            graphFunctionPanel.BackColor = Color.DarkGray;
             graphFunctionPanel.Controls.Add(formulaLabel);
             graphFunctionPanel.Controls.Add(idLabel);
             graphFunctionPanel.Controls.Add(colorButton);
@@ -119,19 +123,21 @@ namespace GraphFunctionEditor
 
         public void Draw(Graphics graphics, float pixelSize, int gridCellSize, int gridCellsAmount)
         {
+            Debug.WriteLine(graphFunction.Points[graphFunction.Points.Length - 1]);
             Pen drawPen = new Pen(Color);
             for (int i = 1;i < graphFunction.Points.Length;i++)
             {
                 Vector2 first = GetVectorPointOnGrid(graphFunction.Points[i - 1], pixelSize, gridCellSize * gridCellsAmount);
-                Vector2 second = GetVectorPointOnGrid(graphFunction.Points[i], pixelSize , gridCellSize* gridCellsAmount);
-                graphics.DrawEllipse(new Pen(Color.Azure), gridCellSize * gridCellsAmount / 2, gridCellSize * gridCellsAmount / 2, 2, 2);
+                Vector2 second = GetVectorPointOnGrid(graphFunction.Points[i], pixelSize, gridCellSize * gridCellsAmount);
                 graphics.DrawLine(drawPen, first.X, first.Y, second.X, second.Y);
             }
         }
 
         private Vector2 GetVectorPointOnGrid(Vector2 vector, float pixelSize, int gridSize)
         {
-            Vector2 temp = vector * (1 / pixelSize);
+            Vector2 temp = vector*(1/pixelSize);
+            if (float.IsNaN(temp.Y)) temp.Y = 0;
+            temp.Y = Math.Clamp(temp.Y, gridSize / -2, gridSize / 2);
             return new Vector2(gridSize/2 + temp.X, gridSize/2 - temp.Y);
         }
     }
